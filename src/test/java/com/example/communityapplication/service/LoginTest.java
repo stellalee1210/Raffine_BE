@@ -13,7 +13,6 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.transaction.annotation.Transactional;
 
-
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.security.test.web.servlet.response.SecurityMockMvcResultMatchers.authenticated;
 import static org.springframework.security.test.web.servlet.response.SecurityMockMvcResultMatchers.unauthenticated;
@@ -40,13 +39,14 @@ public class LoginTest {
     //테스트 시작 전 준비 단계
     @BeforeEach
     void setUp() {
-        //Users 리턴해서 user에 저장
-        user = usersRepository.save(new Users(
-                "test@test.com",
-                passwordEncoder.encode("Test234!"),
-                "테스트유저",
-                "image.jpg"
-        ));
+        user = usersRepository.save(
+                new Users(
+                        "test@test.com",
+                        passwordEncoder.encode("Test234!"),
+                        "테스트유저",
+                        "profiles/test-profile.png"
+                )
+        );
     }
 
     @Test
