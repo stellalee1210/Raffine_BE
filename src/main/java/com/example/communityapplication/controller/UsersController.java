@@ -6,8 +6,10 @@ import com.example.communityapplication.service.UsersService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 @RestController
 @RequestMapping("/users")
@@ -16,12 +18,18 @@ import org.springframework.web.bind.annotation.*;
 public class UsersController {
     private final UsersService usersService;
 
-    @PostMapping("/signup")
-    public ResponseEntity<ApiResponse<UserResponseDto>> createUser(@Valid @RequestBody UserRequestDto request) {
+    @PostMapping(
+            value = "/signup",
+            consumes = MediaType.MULTIPART_FORM_DATA_VALUE
+    )
+    public ResponseEntity<ApiResponse<UserResponseDto>> createUser(
+            @Valid @RequestPart("request") UserRequestDto request,
+            @RequestPart("profilePicture") MultipartFile profilePicture
+    ) {
         UserResponseDto userResponseDto;
         try {
-            userResponseDto = usersService.create(request.getEmail(), request.getPassword(),request.getNickname(),request.getProfilePicture());
-        } catch (IllegalAccessException e) {
+            userResponseDto = usersService.create(request.getEmail(), request.getPassword(),request.getNickname(), profilePicture);
+        } catch (IllegalArgumentException e) {
             throw new RuntimeException(e);
         }
         return ResponseEntity

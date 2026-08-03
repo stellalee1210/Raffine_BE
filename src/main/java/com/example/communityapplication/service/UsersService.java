@@ -5,14 +5,14 @@ import com.example.communityapplication.dto.UserResponseDto;
 import com.example.communityapplication.entity.Users;
 import com.example.communityapplication.repository.UsersRepository;
 
+import com.example.communityapplication.storage.LocalImageStorage;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.annotation.Validated;
-
-import java.util.Optional;
+import org.springframework.web.multipart.MultipartFile;
 
 @Service
 @Validated
@@ -22,20 +22,21 @@ public class UsersService {
     private final UsersRepository usersRepository;
     private final PostService postService;
     private final PasswordEncoder passwordEncoder;
+    private final LocalImageStorage localImageStorage;
 
-    public UserResponseDto create(String email, String password, String nickname, String profilePicture) throws IllegalAccessException {
-        Optional<Users> duplicateEmailUser = usersRepository.findByEmail(email);
-        Optional<Users> duplicateNicknameUser = usersRepository.findByNickname(nickname);
-        if(duplicateEmailUser.isPresent()){
-            throw new IllegalAccessException("signup unavailable - existing email");
-        } else if(duplicateNicknameUser.isPresent()){
-            throw new IllegalAccessException("signup unavailable - existing nickname");
+    public UserResponseDto create(String email, String password, String nickname, MultipartFile rawProfilePicture) throws IllegalArgumentException {
+        if(usersRepository.findByEmail(email).isPresent()){
+            throw new IllegalArgumentException("signup unavailable - existing email");
+        }
+        if(usersRepository.findByNickname(nickname).isPresent()){
+            throw new IllegalArgumentException("signup unavailable - existing nickname");
         }
 
         String encryptedPassword = passwordEncoder.encode(password);
+        String profilePicture = localImageStorage.upload(rawProfilePicture, "profiles");
         Users user = new Users(email, encryptedPassword, nickname, profilePicture);
-        usersRepository.save(user);
-        return new UserResponseDto(user);
+        Users savedUser = usersRepository.save(user);
+        return new UserResponseDto(savedUser);
     }
 
     @PreAuthorize("@userAuthChecker.isOwner(#userId, authentication.name)")
