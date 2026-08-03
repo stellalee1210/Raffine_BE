@@ -49,6 +49,7 @@ public class UsersService {
         return new UserResponseDto(user);
     }
 
+    @PreAuthorize("@userAuthChecker.isOwner(#userId, authentication.name)")
     @Transactional(readOnly = true)
     public Resource getProfilePictureResource(Long userId) {
         Users user = usersRepository.findById(userId)
