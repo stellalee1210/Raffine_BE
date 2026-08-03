@@ -109,6 +109,7 @@ public class LocalImageStorage implements ImageStorage{
         }
 
         try {
+            Files.createDirectories(targetDirectory);
             Files.copy(
                     file.getInputStream(),
                     targetPath,
