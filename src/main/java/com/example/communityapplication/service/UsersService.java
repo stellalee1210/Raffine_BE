@@ -33,7 +33,7 @@ public class UsersService {
         }
 
         String encryptedPassword = passwordEncoder.encode(password);
-        String profilePicture = localImageStorage.upload(rawProfilePicture, "profiles");
+        String profilePicture = localImageStorage.upload(rawProfilePicture, "profile");
         Users user = new Users(email, encryptedPassword, nickname, profilePicture);
         Users savedUser = usersRepository.save(user);
         return new UserResponseDto(savedUser);
