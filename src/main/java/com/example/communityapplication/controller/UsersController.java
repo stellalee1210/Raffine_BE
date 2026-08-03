@@ -9,6 +9,7 @@ import org.springframework.core.io.Resource;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -49,10 +50,10 @@ public class UsersController {
                 .ok(ApiResponse.of("get_data_success", userResponse));
     }
 
-    @GetMapping("/{userId}/profilePicture")
-    public ResponseEntity<Resource> getProfilePicture (@PathVariable Long userId) throws IOException {
+    @GetMapping("/profilePicture")
+    public ResponseEntity<Resource> getProfilePicture ( Authentication authentication) throws IOException {
         Resource resource =
-                usersService.getProfilePictureResource(userId);
+                usersService.getProfilePictureResource(authentication.getName());
 
         Path imagePath = resource.getFile().toPath();
         String contentType = Files.probeContentType(imagePath);
