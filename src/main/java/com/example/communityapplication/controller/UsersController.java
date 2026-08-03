@@ -5,11 +5,16 @@ import com.example.communityapplication.response.ApiResponse;
 import com.example.communityapplication.service.UsersService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.core.io.Resource;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
 
 @RestController
 @RequestMapping("/users")
@@ -45,10 +50,15 @@ public class UsersController {
     }
 
     @GetMapping("/{userId}/profilePicture")
-    public ResponseEntity<ApiResponse<ProfilePictureResponseDto>> getProfilePicture (@PathVariable Long userId){
-        ProfilePictureResponseDto profilePictureResponse = usersService.getUserProfilePicture(userId);
-        return ResponseEntity
-                .ok(ApiResponse.of("get_profile_picture_success", profilePictureResponse));
+    public ResponseEntity<Resource> getProfilePicture (@PathVariable Long userId) throws IOException {
+        Resource resource =
+                usersService.getProfilePictureResource(userId);
+
+        Path imagePath = resource.getFile().toPath();
+        String contentType = Files.probeContentType(imagePath);
+
+        return ResponseEntity.ok()
+                .contentType(MediaType.parseMediaType(contentType)).body(resource);
     }
 
     @PatchMapping("/{userId}/nickname")

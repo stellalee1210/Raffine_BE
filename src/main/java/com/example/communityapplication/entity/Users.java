@@ -23,7 +23,7 @@ public class Users {
     private String profilePicture;
     private Date deletedAt;
 
-    public Users(String email, String password, String nickname, String profilePicture){
+    public  Users(String email, String password, String nickname, String profilePicture){
         this.email = email;
         this.password = password;
         this.nickname = nickname;

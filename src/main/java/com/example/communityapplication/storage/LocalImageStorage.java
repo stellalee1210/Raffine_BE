@@ -1,10 +1,13 @@
 package com.example.communityapplication.storage;
 
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.io.Resource;
+import org.springframework.core.io.UrlResource;
 import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.net.MalformedURLException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -123,6 +126,38 @@ public class LocalImageStorage implements ImageStorage{
         }
 
         return directory + "/" + storedFilename;
+    }
+
+
+    @Override
+    public Resource get(String key) throws IllegalArgumentException{
+
+        Path imagePath = uploadRoot.resolve(key).normalize();
+
+        if (!imagePath.startsWith(uploadRoot)) {
+            throw new IllegalArgumentException(
+                    "잘못된 이미지 경로입니다."
+            );
+        }
+
+        try {
+            Resource resource = new UrlResource(imagePath.toUri());
+
+            if (!resource.exists()
+                    || !resource.isReadable()) {
+                throw new IllegalArgumentException(
+                        "이미지를 찾을 수 없습니다."
+                );
+            }
+
+            return resource;
+
+        } catch (MalformedURLException exception) {
+            throw new IllegalStateException(
+                    "이미지 경로를 읽을 수 없습니다.",
+                    exception
+            );
+        }
     }
 
     @Override

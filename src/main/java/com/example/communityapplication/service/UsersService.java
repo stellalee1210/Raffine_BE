@@ -1,12 +1,12 @@
 package com.example.communityapplication.service;
 
-import com.example.communityapplication.dto.ProfilePictureResponseDto;
 import com.example.communityapplication.dto.UserResponseDto;
 import com.example.communityapplication.entity.Users;
 import com.example.communityapplication.repository.UsersRepository;
 
 import com.example.communityapplication.storage.LocalImageStorage;
 import lombok.RequiredArgsConstructor;
+import org.springframework.core.io.Resource;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -50,11 +50,10 @@ public class UsersService {
     }
 
     @Transactional(readOnly = true)
-    public ProfilePictureResponseDto getUserProfilePicture(Long userId){
+    public Resource getProfilePictureResource(Long userId) {
         Users user = usersRepository.findById(userId)
                 .orElseThrow(() -> new IllegalArgumentException("user not found"));
-
-        return new ProfilePictureResponseDto(user.getProfilePicture());
+        return localImageStorage.get(user.getProfilePicture());
     }
 
     @PreAuthorize("@userAuthChecker.isOwner(#userId, authentication.name)")
