@@ -7,11 +7,13 @@ import com.example.communityapplication.entity.Posts;
 import com.example.communityapplication.entity.Users;
 import com.example.communityapplication.repository.PostsRepository;
 import com.example.communityapplication.repository.UsersRepository;
+import com.example.communityapplication.storage.LocalImageStorage;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.annotation.Validated;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.Date;
 import java.util.List;
@@ -23,24 +25,39 @@ import java.util.List;
 public class PostService {
     private final UsersRepository usersRepository;
     private final PostsRepository postsRepository;
-
+    private final LocalImageStorage localImageStorage;
     private final CommentService commentService;
 
-    @PreAuthorize("@userAuthChecker.isOwner(#userId, authentication.name)")
-    public PostResponseDto createPost(Long userId, String title, String content, String file) {
-        Users user = usersRepository.findById(userId)
+    @PreAuthorize("isAuthenticated()")
+    public PostResponseDto createPost(String email, String title, String content, MultipartFile inputFile) {
+        Users user = usersRepository.findByEmail(email)
                 .orElseThrow(() -> new IllegalArgumentException("user not found"));
-        String author = user.getNickname();
-        Posts post = new Posts(
-                userId,
-                author,
-                new Date(),
-                title,
-                content,
-                file
-        );
-        postsRepository.save(post);
-        return new PostResponseDto(post);
+
+        boolean uploaded = inputFile != null && !inputFile.isEmpty();
+
+        String fileKey = uploaded ?
+                localImageStorage.upload(inputFile, "posts")
+                : "default/default-picture.png";
+
+        try{
+            Posts post = new Posts(
+                    user.getId(),
+                    user.getNickname(),
+                    new Date(),
+                    title,
+                    content,
+                    fileKey
+            );
+            Posts savedPost = postsRepository.save(post);
+            return new PostResponseDto(savedPost);
+
+        } catch (RuntimeException e) {
+            if(uploaded){
+                localImageStorage.delete(fileKey);
+            }
+            throw e;
+        }
+
     }
 
     @Transactional(readOnly = true)

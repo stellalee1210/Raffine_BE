@@ -6,8 +6,11 @@ import com.example.communityapplication.service.PostService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 @RestController
 @RequestMapping("/posts")
@@ -16,9 +19,16 @@ import org.springframework.web.bind.annotation.*;
 public class PostsController {
     private final PostService postService;
 
-    @PostMapping("/{userId}")
-    public ResponseEntity<ApiResponse<PostResponseDto>> createPost(@PathVariable Long userId, @Valid @RequestBody PostRequestDto request) {
-        PostResponseDto postResponse = postService.createPost(userId, request.getTitle(),request.getContent(),request.getFile());
+    @PostMapping(
+            value = "",
+            consumes = MediaType.MULTIPART_FORM_DATA_VALUE
+    )
+    public ResponseEntity<ApiResponse<PostResponseDto>> createPost(
+            Authentication authentication,
+            @Valid @RequestPart("request") PostRequestDto request,
+            @RequestPart(value = "file", required = false) MultipartFile file
+    ) {
+        PostResponseDto postResponse = postService.createPost(authentication.getName(), request.getTitle(),request.getContent(), file);
         return ResponseEntity
                 .status(HttpStatus.CREATED)
                 .body(ApiResponse.of("post_success", postResponse));
