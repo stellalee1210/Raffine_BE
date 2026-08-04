@@ -43,8 +43,8 @@ public class UpdateUserInfoTest {
                         "userB@test.com",
                         passwordEncoder.encode("userBPwd123!"),
                         "유저B",
-                        "userBProfile.jpg"
-                ));
+                "profiles/test-profile.png"
+        ));
 
         mockMvc.perform(patch("/users/{userId}/password", userB.getId()) //userB의 id를 사용해 비밀번호 변경
                         .with(user("userA@test.com")) //지금 로그인 한 유저는 userA
@@ -66,7 +66,7 @@ public class UpdateUserInfoTest {
                 "userA@test.com",
                 passwordEncoder.encode("userAPwd123!"),
                 "유저A",
-                "userAProfile.jpg"
+                "profiles/test-profile.png"
         ));
         mockMvc.perform(patch("/users/{userId}/password", userA.getId())
                         .with(user(userA.getEmail()))

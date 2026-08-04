@@ -42,10 +42,10 @@ public class UserServiceTest {
         //given
         String newNickname = "newName";
         //updateNickname 함수 내부에 보면 repository 조회를 하는 로직이 있다. 그 때의 반환값을 설정해주는 역할
-        when(usersRepository.findById(1L)).thenReturn(Optional.of(user));
+        when(usersRepository.findByEmail("test@test.com")).thenReturn(Optional.of(user));
 
         //when
-        usersService.updateNickname( 1L , newNickname);
+        usersService.updateNickname( "test@test.com" , newNickname);
 
         //then
         assertEquals(newNickname, user.getNickname());
