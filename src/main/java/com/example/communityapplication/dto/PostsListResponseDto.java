@@ -16,7 +16,7 @@ public class PostsListResponseDto {
                         post.getId(),
                         post.getUserId(),
                         post.getAuthor(),
-                        post.getFile(),
+                        post.getFileKey(),
                         post.getTitle()
                 )).toList();
     }

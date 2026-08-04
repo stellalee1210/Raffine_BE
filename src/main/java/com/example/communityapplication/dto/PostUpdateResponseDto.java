@@ -11,12 +11,12 @@ import java.util.Date;
 public class PostUpdateResponseDto {
     private String title;
     private String content;
-    private String file;
+    private String fileKey;
     private Date updatedAt;
     public PostUpdateResponseDto(Posts posts){
         this.updatedAt = posts.getUpdatedAt();
         this.title = posts.getTitle();
         this.content = posts.getContent();
-        this.file = posts.getFile();
+        this.fileKey = posts.getFileKey();
     }
 }

@@ -25,17 +25,17 @@ public class Posts {
 
     private String title;
     private String content;
-    private String file;
+    private String fileKey;
     private Date updatedAt;
     private Date deletedAt;
 
-    public Posts(Long userId, String author, Date createdAt, String title, String content, String file) {
+    public Posts(Long userId, String author, Date createdAt, String title, String content, String fileKey) {
         this.userId = userId;
         this.author = author;
         this.createdAt = createdAt;
         this.title = title;
         this.content = content;
-        this.file = file;
+        this.fileKey = fileKey;
         this.updatedAt = null;
         this.deletedAt = null;
     }
@@ -43,7 +43,7 @@ public class Posts {
     public void updatePost(String newTitle, String newContent, String newFile){
         if(newTitle != null && !newTitle.equals(this.title)) this.changeTitle(newTitle);
         if(newContent != null && !newContent.equals(this.content)) this.changeContent(newContent);
-        if(newFile != null && !newFile.equals(this.file)) this.changeFile(newFile);
+        if(newFile != null && !newFile.equals(this.fileKey)) this.changeFile(newFile);
         this.updatedAt = new Date();
     }
 
@@ -53,5 +53,5 @@ public class Posts {
     private void changeContent(String content) {
         this.content = content;
     }
-    private void changeFile(String file){ this.file = file;}
+    private void changeFile(String file){ this.fileKey = file;}
 }

@@ -53,7 +53,7 @@ public class PostsController {
     //게시글 수정
     @PatchMapping("/{postId}")
     public ResponseEntity<ApiResponse<PostUpdateResponseDto>> updatePost(@PathVariable Long postId, @Valid  @RequestBody PostUpdateRequestDto request) {
-        PostUpdateResponseDto postResponse = postService.updatePost(postId, request.getTitle(),request.getContent(),request.getFile());
+        PostUpdateResponseDto postResponse = postService.updatePost(postId, request.getTitle(),request.getContent(),request.getFileKey());
         return ResponseEntity
                 .ok(ApiResponse.of("post_patch_success", postResponse));
     }

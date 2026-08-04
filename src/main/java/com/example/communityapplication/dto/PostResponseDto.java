@@ -16,7 +16,7 @@ public class PostResponseDto {
     private Date date;
     private String title;
     private String content;
-    private String file;
+    private String fileKey;
 
     public PostResponseDto(Posts posts) {
         this.id = posts.getId();
@@ -25,6 +25,6 @@ public class PostResponseDto {
         this.date = posts.getCreatedAt();
         this.title = posts.getTitle();
         this.content = posts.getContent();
-        this.file = posts.getFile();
+        this.fileKey = posts.getFileKey();
     }
 }
