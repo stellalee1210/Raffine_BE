@@ -161,5 +161,28 @@ public class LocalImageStorage implements ImageStorage{
     }
 
     @Override
-    public void delete(String key){}
+    public void delete(String key) {
+        if (key == null || key.isBlank()) {
+            return;
+        }
+
+        Path imagePath = uploadRoot
+                .resolve(key)
+                .normalize();
+
+        if (!imagePath.startsWith(uploadRoot)) {
+            throw new IllegalArgumentException(
+                    "잘못된 이미지 삭제 경로입니다."
+            );
+        }
+
+        try {
+            Files.deleteIfExists(imagePath);
+        } catch (IOException exception) {
+            throw new IllegalStateException(
+                    "이미지 삭제에 실패했습니다.",
+                    exception
+            );
+        }
+    }
 }
