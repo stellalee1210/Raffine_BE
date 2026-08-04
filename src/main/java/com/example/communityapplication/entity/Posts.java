@@ -40,10 +40,10 @@ public class Posts {
         this.deletedAt = null;
     }
 
-    public void updatePost(String newTitle, String newContent, String newFile){
+    public void updatePost(String newTitle, String newContent, String newFileKey){
         if(newTitle != null && !newTitle.equals(this.title)) this.changeTitle(newTitle);
         if(newContent != null && !newContent.equals(this.content)) this.changeContent(newContent);
-        if(newFile != null && !newFile.equals(this.fileKey)) this.changeFile(newFile);
+        if(newFileKey != null && !newFileKey.equals(this.fileKey)) this.changeFile(newFileKey);
         this.updatedAt = new Date();
     }
 
@@ -53,5 +53,5 @@ public class Posts {
     private void changeContent(String content) {
         this.content = content;
     }
-    private void changeFile(String file){ this.fileKey = file;}
+    private void changeFile(String fileKey){ this.fileKey = fileKey;}
 }

@@ -9,6 +9,7 @@ import com.example.communityapplication.repository.PostsRepository;
 import com.example.communityapplication.repository.UsersRepository;
 import com.example.communityapplication.storage.LocalImageStorage;
 import lombok.RequiredArgsConstructor;
+import org.springframework.core.io.Resource;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -71,6 +72,13 @@ public class PostService {
         Posts post = postsRepository.findById(postId)
                 .orElseThrow(() -> new IllegalArgumentException("post not found"));
         return new PostResponseDto(post);
+    }
+
+    @Transactional(readOnly = true)
+    public Resource getPostImageResource(Long postId){
+        Posts post = postsRepository.findById(postId)
+                .orElseThrow(() -> new IllegalArgumentException("post not found"));
+        return localImageStorage.get((post.getFileKey()));
     }
 
     @PreAuthorize("@postAuthChecker.isOwner(#postId, authentication.name)")
