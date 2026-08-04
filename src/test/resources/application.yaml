@@ -7,7 +7,7 @@ spring:
 
   jpa:
     hibernate:
-      ddl-auto: create-drop
+      ddl-auto: update
 
 app:
   upload-dir: ${java.io.tmpdir}/raffine-test-uploads
