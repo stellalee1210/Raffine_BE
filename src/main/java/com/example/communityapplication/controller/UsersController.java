@@ -62,9 +62,9 @@ public class UsersController {
                 .contentType(MediaType.parseMediaType(contentType)).body(resource);
     }
 
-    @PatchMapping("/{userId}/nickname")
-    public ResponseEntity<ApiResponse<EmptyResponseDto>> updateNickname(@PathVariable Long userId, @Valid  @RequestBody UserUpdateRequestDto request){
-        usersService.updateNickname(userId, request.getNickname());
+    @PatchMapping("/nickname")
+    public ResponseEntity<ApiResponse<EmptyResponseDto>> updateNickname(Authentication authentication, @Valid  @RequestBody UserUpdateRequestDto request){
+        usersService.updateNickname(authentication.getName(), request.getNickname());
         return ResponseEntity.noContent().build();
     }
 

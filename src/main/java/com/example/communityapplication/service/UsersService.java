@@ -57,9 +57,9 @@ public class UsersService {
         return localImageStorage.get(user.getProfilePicture());
     }
 
-    @PreAuthorize("@userAuthChecker.isOwner(#userId, authentication.name)")
-    public void updateNickname(Long userId, String newNickname){
-        Users user = usersRepository.findById(userId)
+    @PreAuthorize("isAuthenticated()")
+    public void updateNickname(String email, String newNickname){
+        Users user = usersRepository.findByEmail(email)
                 .orElseThrow(() -> new IllegalArgumentException("user not found"));
         user.changeNickname(newNickname);
     }
