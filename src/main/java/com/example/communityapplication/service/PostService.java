@@ -34,10 +34,11 @@ public class PostService {
         Users user = usersRepository.findByEmail(email)
                 .orElseThrow(() -> new IllegalArgumentException("user not found"));
 
+
         boolean uploaded = inputFile != null && !inputFile.isEmpty();
 
         String fileKey = uploaded ?
-                localImageStorage.upload(inputFile, "posts")
+                localImageStorage.upload(inputFile, "post")
                 : "default/default-picture.png";
 
         try{
@@ -91,12 +92,20 @@ public class PostService {
 
     @PreAuthorize("@postAuthChecker.isOwner(#postId, authentication.name)")
     public void deletePost(Long postId) {
-        //댓글 먼저 전부 삭제 후 -> 게시글 삭제
-        commentService.deleteAllCommentFromPost(postId);
-
         Posts post = postsRepository.findById(postId)
                 .orElseThrow(() -> new IllegalArgumentException("post not found"));
+        String fileKey = post.getFileKey();
+        boolean uploadedImage = !"default/default-picture.png".equals(fileKey);
+
+
+        //댓글 먼저 전부 삭제 후 -> 게시글 삭제
+        commentService.deleteAllCommentFromPost(postId);
         postsRepository.delete(post);
+        postsRepository.flush();
+
+        if(uploadedImage){
+            localImageStorage.delete(fileKey);
+        }
     }
 
     public void deleteAllPostFromUser(Long userId){
