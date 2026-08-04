@@ -67,7 +67,7 @@ public class PostsController {
 
     //게시글 수정
     @PatchMapping(
-            value = "/postId",
+            value = "/{postId}",
             consumes = MediaType.MULTIPART_FORM_DATA_VALUE
     )
     public ResponseEntity<ApiResponse<PostUpdateResponseDto>> updatePost(
