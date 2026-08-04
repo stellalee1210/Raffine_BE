@@ -83,10 +83,32 @@ public class PostService {
     }
 
     @PreAuthorize("@postAuthChecker.isOwner(#postId, authentication.name)")
-    public PostUpdateResponseDto updatePost(Long postId, String newTitle, String newContent, String newFile) {
+    public PostUpdateResponseDto updatePost(Long postId, String titleInput, String contentInput, MultipartFile fileInput) {
         Posts post = postsRepository.findById(postId)
                 .orElseThrow(() -> new IllegalArgumentException("post not found - post update unavailable"));
-        post.updatePost(newTitle, newContent,  newFile);
+        boolean newImageUploaded =
+                fileInput != null && !fileInput.isEmpty();
+        String originalFileKey = post.getFileKey();
+        String newFileKey = originalFileKey;
+        if(newImageUploaded){
+            newFileKey = localImageStorage.upload(fileInput, "post");
+        }
+
+        try{
+            post.updatePost(titleInput, contentInput, newFileKey);
+            postsRepository.flush();
+        }catch (RuntimeException e){
+            if(newImageUploaded){
+                localImageStorage.delete((newFileKey));
+            }
+            throw e;
+        }
+
+        if (newImageUploaded
+                && !"default/default-picture.png".equals(originalFileKey)) {
+            localImageStorage.delete(originalFileKey);
+        }
+
         return new PostUpdateResponseDto(post);
     }
 

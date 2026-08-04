@@ -66,9 +66,15 @@ public class PostsController {
     }
 
     //게시글 수정
-    @PatchMapping("/{postId}")
-    public ResponseEntity<ApiResponse<PostUpdateResponseDto>> updatePost(@PathVariable Long postId, @Valid  @RequestBody PostUpdateRequestDto request) {
-        PostUpdateResponseDto postResponse = postService.updatePost(postId, request.getTitle(),request.getContent(),request.getFileKey());
+    @PatchMapping(
+            value = "postId",
+            consumes = MediaType.MULTIPART_FORM_DATA_VALUE
+    )
+    public ResponseEntity<ApiResponse<PostUpdateResponseDto>> updatePost(
+            @PathVariable Long postId,
+            @Valid @RequestPart("request") PostRequestDto request,
+            @RequestPart(value = "file", required = false) MultipartFile file){
+        PostUpdateResponseDto postResponse = postService.updatePost(postId, request.getTitle(),request.getContent(), file);
         return ResponseEntity
                 .ok(ApiResponse.of("post_patch_success", postResponse));
     }

@@ -160,6 +160,8 @@ public class LocalImageStorage implements ImageStorage{
         }
     }
 
+
+
     @Override
     public void delete(String key) {
         if (key == null || key.isBlank()) {
