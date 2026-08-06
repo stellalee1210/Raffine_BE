@@ -62,6 +62,18 @@ public class UsersController {
                 .contentType(MediaType.parseMediaType(contentType)).body(resource);
     }
 
+    @GetMapping("/{userId}/profilePicture")
+    public ResponseEntity<Resource> getProfilePicture (@PathVariable Long userId) throws IOException {
+        Resource resource =
+                usersService.getProfilePictureResource(userId);
+
+        Path imagePath = resource.getFile().toPath();
+        String contentType = Files.probeContentType(imagePath);
+
+        return ResponseEntity.ok()
+                .contentType(MediaType.parseMediaType(contentType)).body(resource);
+    }
+
     @PatchMapping("/nickname")
     public ResponseEntity<ApiResponse<EmptyResponseDto>> updateNickname(Authentication authentication, @Valid  @RequestBody UserUpdateRequestDto request){
         usersService.updateNickname(authentication.getName(), request.getNickname());

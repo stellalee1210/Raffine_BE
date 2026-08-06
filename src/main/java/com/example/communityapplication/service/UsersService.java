@@ -57,6 +57,14 @@ public class UsersService {
         return localImageStorage.get(user.getProfilePicture());
     }
 
+    @Transactional(readOnly = true)
+    @PreAuthorize("isAuthenticated()")
+    public Resource getProfilePictureResource(Long userId) {
+        Users user = usersRepository.findById(userId)
+                .orElseThrow(() -> new IllegalArgumentException("user not found"));
+        return localImageStorage.get(user.getProfilePicture());
+    }
+
     @PreAuthorize("isAuthenticated()")
     public void updateNickname(String email, String newNickname){
         Users user = usersRepository.findByEmail(email)
