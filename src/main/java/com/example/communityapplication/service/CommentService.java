@@ -27,29 +27,34 @@ public class CommentService {
     @PreAuthorize("@userAuthChecker.isOwner(#userId, authentication.name)")
     public CommentResponseDto createComment(Long postId, Long userId, String content){
         Users user = usersRepository.findById(userId)
-                .orElseThrow(() -> new IllegalArgumentException("comment not found"));
-        Comments comment = new Comments(
-                postId,
+                .orElseThrow(() -> new IllegalArgumentException("user not found"));
+        Comments comment = commentsRepository.save(
+                new Comments(
+                    postId,
+                    userId,
+                    content,
+                    new Date()
+                ));
+        return new CommentResponseDto(
+                comment.getId(),
                 userId,
                 user.getNickname(),
-                content,
-                new Date()
-        );
-        commentsRepository.save(comment);
-        return new CommentResponseDto(comment);
+                comment.getCreatedAt(),
+                comment.getContent());
     }
 
     @Transactional(readOnly = true)
     public CommentsListResponseDto getComment(Long postId){
-        return new CommentsListResponseDto(commentsRepository.findByPostId(postId));
+        return new CommentsListResponseDto(commentsRepository.findAllCommentList(postId));
     }
 
+    //CommentsListResponseDto가 아니라 CommentsReponseDto로 바꿔야 하지 않나..?
     @PreAuthorize("@commentAuthChecker.isOwner(#commentId, authentication.name)")
     public CommentsListResponseDto patchComment(Long postId, Long commentId, String newContent){
         Comments comment = commentsRepository.findById(commentId)
                 .orElseThrow(() -> new IllegalArgumentException("comment not found"));
         comment.update(newContent);
-        return new CommentsListResponseDto(commentsRepository.findByPostId(postId));
+        return new CommentsListResponseDto();
     }
 
     @PreAuthorize("@commentAuthChecker.isOwner(#commentId, authentication.name)")
