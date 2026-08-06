@@ -42,16 +42,22 @@ public class PostService {
                 : "default/default-picture.png";
 
         try{
-            Posts post = new Posts(
+            Posts post = postsRepository.save(
+                    new Posts(
+                            user.getId(),
+                            new Date(),
+                            title,
+                            content,
+                            fileKey
+                    )
+            );
+            return new PostResponseDto(
+                    post.getId(),
                     user.getId(),
                     user.getNickname(),
-                    new Date(),
-                    title,
-                    content,
-                    fileKey
-            );
-            Posts savedPost = postsRepository.save(post);
-            return new PostResponseDto(savedPost);
+                    post.getCreatedAt(),
+                    post.getTitle(),
+                    post.getContent());
 
         } catch (RuntimeException e) {
             if(uploaded){
@@ -64,15 +70,17 @@ public class PostService {
 
     @Transactional(readOnly = true)
     public PostsListResponseDto getPostList() {
-        List<Posts> postList = postsRepository.findAll();
+        List<PostResponseDto> postList = postsRepository.findAllPostList();
         return new PostsListResponseDto(postList);
     }
 
     @Transactional(readOnly = true)
     public PostResponseDto getPost(Long postId) {
-        Posts post = postsRepository.findById(postId)
-                .orElseThrow(() -> new IllegalArgumentException("post not found"));
-        return new PostResponseDto(post);
+        PostResponseDto postResponseDto = postsRepository.findPost(postId);
+        if(postResponseDto == null){
+            throw new  IllegalArgumentException("post not found");
+        }
+        return postResponseDto;
     }
 
     @Transactional(readOnly = true)
@@ -131,7 +139,7 @@ public class PostService {
     }
 
     public void deleteAllPostFromUser(Long userId){
-        List<Posts> postList = postsRepository.findByUserId(userId);
+        List<Posts> postList = postsRepository.findPostByUserId(userId);
         for (Posts post : postList) {
             postsRepository.delete(post);
         }

@@ -1,6 +1,5 @@
 package com.example.communityapplication.dto;
 
-import com.example.communityapplication.entity.Posts;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -10,14 +9,13 @@ import java.util.List;
 @NoArgsConstructor
 public class PostsListResponseDto {
     private List<PostListDto> postList;
-    public PostsListResponseDto(List<Posts> postList){
+    public PostsListResponseDto(List<PostResponseDto> postList){
         this.postList=postList.stream()
-                .map(post-> new PostListDto(
-                        post.getId(),
-                        post.getUserId(),
-                        post.getAuthor(),
-                        post.getFileKey(),
-                        post.getTitle()
+                .map(postResponseDto-> new PostListDto(
+                        postResponseDto.getId(),
+                        postResponseDto.getUserId(),
+                        postResponseDto.getAuthor(),
+                        postResponseDto.getTitle()
                 )).toList();
     }
 }

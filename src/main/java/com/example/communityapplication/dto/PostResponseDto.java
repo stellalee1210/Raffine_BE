@@ -1,6 +1,5 @@
 package com.example.communityapplication.dto;
 
-import com.example.communityapplication.entity.Posts;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -13,16 +12,23 @@ public class PostResponseDto {
     private Long id;
     private Long userId;
     private String author;
-    private Date date;
+    private Date createdAt;
     private String title;
     private String content;
 
-    public PostResponseDto(Posts posts) {
-        this.id = posts.getId();
-        this.userId= posts.getUserId();
-        this.author = posts.getAuthor();
-        this.date = posts.getCreatedAt();
-        this.title = posts.getTitle();
-        this.content = posts.getContent();
+    public PostResponseDto(
+            Long id,
+            Long userId,
+            String author,
+            Date createdAt,
+            String title,
+            String content
+            ){
+        this.id = id;
+        this.userId= userId;
+        this.author = author;
+        this.createdAt = createdAt;
+        this.title = title;
+        this.content = content;
     }
 }

@@ -18,20 +18,18 @@ public class Posts {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-
     private Long userId;
-    private String author;
-    private Date createdAt;
 
+    private Date createdAt;
     private String title;
     private String content;
     private String fileKey;
+
     private Date updatedAt;
     private Date deletedAt;
 
-    public Posts(Long userId, String author, Date createdAt, String title, String content, String fileKey) {
+    public Posts(Long userId, Date createdAt, String title, String content, String fileKey) {
         this.userId = userId;
-        this.author = author;
         this.createdAt = createdAt;
         this.title = title;
         this.content = content;
