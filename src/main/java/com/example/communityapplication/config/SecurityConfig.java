@@ -38,7 +38,7 @@ public class SecurityConfig {
                 )
                 .cors(cors -> cors.configurationSource(corsConfigurationSource())) // CORS 설정 추가
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers(  "/users/signup", "/login-process", "/csrf").permitAll() // 모두에게 허용
+                        .requestMatchers(  "/users/signup", "/login-process", "/csrf", "/ws/discussion").permitAll() // 모두에게 허용
                         .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
                         .anyRequest().authenticated() // 그 외 모든 요청은 인증 필요
                 );
@@ -118,6 +118,7 @@ public class SecurityConfig {
 
             response.addCookie(userIdCookie);
 
+            request.getSession().setAttribute("loginUserId", user.getId());
             response.sendRedirect("/board");
         };
     }
